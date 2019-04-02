@@ -56,10 +56,28 @@ class App extends Component {
     };
 
     handleSubmit = e => {
+        const { name, age, email } = this.state;
         e.preventDefault();
-        this.handleValidate()
-        console.log('handleSubmit was clicked')
+        const err = this.handleValidate();
+
+        if (!err) {
+            // Add freiend and clear form
+            this.setState({
+                friends: [
+                    ...this.state.friends,
+                    { id: this.state.friends.length + 1, name, age, email }
+                ],
+                errorData: { nameErrors: '', ageErrors: '', emailErrors: '' },
+                name: '',
+                age: '',
+                email: ''
+            });
+        }
     };
+
+    handleUpdate = () => {
+      console.log('handleUpdate clicked')
+    }
 
     render() {
         const { friends, name, age, email, errorData } = this.state;
@@ -95,9 +113,7 @@ class App extends Component {
                     </div>
                     <button>Add Friend</button>
                 </form>
-                {name}
-                {age}
-                {email}
+                <button onClick={this.handleUpdate}>Update</button>
                 {friends.map(friend => (
                     <FriendList key={friend.id} data={friend} />
                 ))}
