@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import FriendList from './components/FriendList/FriendList';
+import axios from 'axios'
 
 class App extends Component {
     state = {
         friends: [],
-        name: '',
-        age: '',
-        email: '',
+        newFriend: {
+            name: '',
+            age: '',
+            email: ''
+        },
         errorData: {
             nameErrors: '',
             ageErrors: '',
@@ -18,16 +21,17 @@ class App extends Component {
         const result = await fetch('http://localhost:5000/friends');
         const friends = await result.json();
         this.setState({ friends });
-        console.log(friends);
     };
 
     handleChange = e => {
         const { name, value } = e.target;
-        this.setState({ [name]: value });
+        this.setState({
+            newFriend: { ...this.state.newFriend, [name]: value }
+        });
     };
 
     handleValidate = () => {
-        const { name, age, email } = this.state;
+        const { newFriend } = this.state;
         let errors = false;
         const errorData = {
             nameErrors: '',
@@ -35,17 +39,17 @@ class App extends Component {
             emailErrors: ''
         };
 
-        if (!name || name.length < 2) {
+        if (!newFriend.name || newFriend.name.length < 2) {
             errors = true;
             errorData.nameErrors = 'Name must be at least 2 characters long';
         }
 
-        if (!age || age < 18) {
+        if (!newFriend.age || newFriend.age < 18) {
             errors = true;
             errorData.ageErrors = 'You must be at least 18 to be my friend';
         }
 
-        if (!email || !email.match('@')) {
+        if (!newFriend.email || !newFriend.email.match('@')) {
             errors = true;
             errorData.emailErrors = 'You must provide a valid email address';
         }
@@ -56,31 +60,60 @@ class App extends Component {
     };
 
     handleSubmit = e => {
-        const { name, age, email } = this.state;
+        const { newFriend } = this.state;
         e.preventDefault();
         const err = this.handleValidate();
 
         if (!err) {
-            // Add freiend and clear form
+            //POST request add friend
+          axios.post('http://localhost:5000/friends/', newFriend)
+            .then(resp => {
+              console.log(resp)
+            })
+            .catch( err => {
+              console.log('Error posting data', err)
+            })
+            //clear form
             this.setState({
-                friends: [
-                    ...this.state.friends,
-                    { id: this.state.friends.length + 1, name, age, email }
-                ],
-                errorData: { nameErrors: '', ageErrors: '', emailErrors: '' },
-                name: '',
-                age: '',
-                email: ''
+                // friends: [
+                //     ...this.state.friends,
+                //     {
+                //         id: this.state.friends.length + 1,
+                //         name: newFriend.name,
+                //         age: newFriend.age,
+                //         email: newFriend.email
+                //     }
+                // ],
+                errorData: {
+                    nameErrors: '',
+                    ageErrors: '',
+                    emailErrors: ''
+                },
+                newFriend: {
+                    name: '',
+                    age: '',
+                    email: ''
+                }
             });
         }
     };
 
-    handleUpdate = () => {
-      console.log('handleUpdate clicked')
-    }
+    handleUpdate = id => {
+        const { friends } = this.state;
+
+        if (id === friends.id) {
+        }
+    };
+
+    handleDelete = id => {
+        const { friends } = this.state;
+        return id === friends.id
+            ? this.setState({ friends: friends.filter(friends.id !== id) })
+            : friends;
+    };
 
     render() {
-        const { friends, name, age, email, errorData } = this.state;
+        const { friends, newFriend, errorData } = this.state;
         return (
             <>
                 <form onSubmit={this.handleSubmit}>
@@ -89,7 +122,7 @@ class App extends Component {
                         <input
                             type="text"
                             name="name"
-                            value={name}
+                            value={newFriend.name}
                             onChange={this.handleChange}
                             placeholder="Name"
                         />
@@ -97,7 +130,7 @@ class App extends Component {
                         <input
                             type="text"
                             name="age"
-                            value={age}
+                            value={newFriend.age}
                             onChange={this.handleChange}
                             placeholder="Age"
                         />
@@ -105,7 +138,7 @@ class App extends Component {
                         <input
                             type="text"
                             name="email"
-                            value={email}
+                            value={newFriend.email}
                             onChange={this.handleChange}
                             placeholder="Email"
                         />
@@ -113,9 +146,13 @@ class App extends Component {
                     </div>
                     <button>Add Friend</button>
                 </form>
-                <button onClick={this.handleUpdate}>Update</button>
                 {friends.map(friend => (
-                    <FriendList key={friend.id} data={friend} />
+                    <FriendList
+                        key={friend.id}
+                        data={friend}
+                        handleUpdate={this.handleUpdate}
+                        handleDelete={this.handleDelete}
+                    />
                 ))}
             </>
         );
