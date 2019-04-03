@@ -1,6 +1,6 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 import FriendList from './components/FriendList/FriendList';
-import axios from 'axios'
 
 class App extends Component {
     state = {
@@ -14,12 +14,14 @@ class App extends Component {
             nameErrors: '',
             ageErrors: '',
             emailErrors: ''
-        }
+        },
+        isUpdate: false,
+        updateID: '',
     };
 
     componentDidMount = async () => {
-        const result = await fetch('http://localhost:5000/friends');
-        const friends = await result.json();
+        const response = await axios.get('http://localhost:5000/friends');
+        const friends = response.data;
         this.setState({ friends });
     };
 
@@ -60,30 +62,55 @@ class App extends Component {
     };
 
     handleSubmit = e => {
-        const { newFriend } = this.state;
+        const { newFriend, isUpdate } = this.state;
         e.preventDefault();
         const err = this.handleValidate();
 
-        if (!err) {
+        if (!err && !isUpdate) {
             //POST request add friend
-          axios.post('http://localhost:5000/friends/', newFriend)
-            .then(resp => {
-              console.log(resp)
-            })
-            .catch( err => {
-              console.log('Error posting data', err)
-            })
+            axios
+                .post('http://localhost:5000/friends/', newFriend)
+                .then(resp => {
+                    console.log(resp);
+                })
+                .catch(err => {
+                    console.log('Error posting data', err);
+                });
             //clear form
             this.setState({
-                // friends: [
-                //     ...this.state.friends,
-                //     {
-                //         id: this.state.friends.length + 1,
-                //         name: newFriend.name,
-                //         age: newFriend.age,
-                //         email: newFriend.email
-                //     }
-                // ],
+                friends: [
+                    ...this.state.friends,
+                    {
+                        id: this.state.friends.length + 1,
+                        name: newFriend.name,
+                        age: newFriend.age,
+                        email: newFriend.email
+                    }
+                ],
+                errorData: {
+                    nameErrors: '',
+                    ageErrors: '',
+                    emailErrors: ''
+                },
+                newFriend: {
+                    name: '',
+                    age: '',
+                    email: ''
+                }
+            });
+        }
+        if (!err && isUpdate) {
+            const id = this.state.updateID;
+            axios
+                .put(`http://localhost:5000/friends/${id}`, newFriend)
+                .then(resp => {
+                    console.log(resp);
+                })
+                .catch(err => {
+                    console.log('Error posting data', err);
+                });
+            //clear form
+            this.setState({
                 errorData: {
                     nameErrors: '',
                     ageErrors: '',
@@ -99,26 +126,35 @@ class App extends Component {
     };
 
     handleUpdate = id => {
-        const { friends } = this.state;
-
-        if (id === friends.id) {
-        }
+        const { friends, isUpdate } = this.state;
+        friends.map(friend => {
+            return friend.id === id
+                ? this.setState({
+                      newFriend: { ...friend },
+                      isUpdate: !isUpdate,
+                      updateID: id
+                  })
+                : null;
+        });
     };
 
     handleDelete = id => {
         const { friends } = this.state;
-        return id === friends.id
-            ? this.setState({ friends: friends.filter(friends.id !== id) })
-            : friends;
+        const deleteFriend = friends.filter( friend => friend.id !== id)
+        this.setState({ friends: deleteFriend })
     };
 
     render() {
-        const { friends, newFriend, errorData } = this.state;
+        const { friends, newFriend, errorData, isUpdate } = this.state;
         return (
             <>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <h3>Add New Friend</h3>
+                        {isUpdate ? (
+                            <h3>Update Friend</h3>
+                        ) : (
+                            <h3>Add New Friend</h3>
+                        )}
                         <input
                             type="text"
                             name="name"
@@ -144,7 +180,11 @@ class App extends Component {
                         />
                         <p style={{ color: 'red' }}>{errorData.emailErrors}</p>
                     </div>
-                    <button>Add Friend</button>
+                    {isUpdate ? (
+                        <button>Update Friend</button>
+                    ) : (
+                        <button>Add Friend</button>
+                    )}
                 </form>
                 {friends.map(friend => (
                     <FriendList

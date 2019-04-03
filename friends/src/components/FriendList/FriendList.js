@@ -10,7 +10,7 @@ export default function FriendList(props) {
                 <p>{email}</p>
             </div>
             <div>
-                <button onClick={() => props.handleUpdate(id)}>Update</button>
+                <button onClick={() => props.handleUpdate(id)}>Select</button>
                 <button onClick={() => props.handleDelete(id)}>Delete</button>
             </div>
         </>
