@@ -16,13 +16,21 @@ class App extends Component {
             emailErrors: ''
         },
         isUpdate: false,
-        updateID: '',
+        updateID: ''
     };
 
     componentDidMount = async () => {
-        const response = await axios.get('http://localhost:5000/friends');
-        const friends = response.data;
-        this.setState({ friends });
+        await this.getDataFromServer();
+    };
+
+    getDataFromServer = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/friends');
+            const friends = response.data;
+            this.setState({ friends });
+        } catch (err) {
+            console.log('Error getting data:', err);
+        }
     };
 
     handleChange = e => {
@@ -71,22 +79,14 @@ class App extends Component {
             axios
                 .post('http://localhost:5000/friends/', newFriend)
                 .then(resp => {
-                    console.log(resp);
+                    this.setState({ friends: resp.data });
                 })
                 .catch(err => {
                     console.log('Error posting data', err);
                 });
+
             //clear form
             this.setState({
-                friends: [
-                    ...this.state.friends,
-                    {
-                        id: this.state.friends.length + 1,
-                        name: newFriend.name,
-                        age: newFriend.age,
-                        email: newFriend.email
-                    }
-                ],
                 errorData: {
                     nameErrors: '',
                     ageErrors: '',
@@ -96,7 +96,7 @@ class App extends Component {
                     name: '',
                     age: '',
                     email: ''
-                }
+                },
             });
         }
         if (!err && isUpdate) {
@@ -104,7 +104,7 @@ class App extends Component {
             axios
                 .put(`http://localhost:5000/friends/${id}`, newFriend)
                 .then(resp => {
-                    console.log(resp);
+                    this.setState({ friends: resp.data });
                 })
                 .catch(err => {
                     console.log('Error posting data', err);
@@ -120,18 +120,19 @@ class App extends Component {
                     name: '',
                     age: '',
                     email: ''
-                }
+                },
+                isUpdate: false
             });
         }
     };
 
     handleUpdate = id => {
-        const { friends, isUpdate } = this.state;
+        const { friends } = this.state;
         friends.map(friend => {
             return friend.id === id
                 ? this.setState({
                       newFriend: { ...friend },
-                      isUpdate: !isUpdate,
+                      isUpdate: true,
                       updateID: id
                   })
                 : null;
@@ -140,8 +141,8 @@ class App extends Component {
 
     handleDelete = id => {
         const { friends } = this.state;
-        const deleteFriend = friends.filter( friend => friend.id !== id)
-        this.setState({ friends: deleteFriend })
+        const deleteFriend = friends.filter(friend => friend.id !== id);
+        this.setState({ friends: deleteFriend });
     };
 
     render() {
