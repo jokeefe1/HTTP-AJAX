@@ -69,21 +69,21 @@ class App extends Component {
         return errors;
     };
 
-    handleSubmit = e => {
+    handleSubmit = async e => {
         const { newFriend, isUpdate } = this.state;
         e.preventDefault();
         const err = this.handleValidate();
 
         if (!err && !isUpdate) {
             //POST request add friend
-            axios
-                .post('http://localhost:5000/friends/', newFriend)
-                .then(resp => {
-                    this.setState({ friends: resp.data });
-                })
-                .catch(err => {
-                    console.log('Error posting data', err);
-                });
+            try {
+              const resp = await axios.post('http://localhost:5000/friends/', newFriend)
+              this.setState({ friends: resp.data})
+            }
+            catch(err) {
+              console.log('Error posting data:', err)
+            }
+
 
             //clear form
             this.setState({
@@ -96,19 +96,18 @@ class App extends Component {
                     name: '',
                     age: '',
                     email: ''
-                },
+                }
             });
         }
         if (!err && isUpdate) {
             const id = this.state.updateID;
-            axios
-                .put(`http://localhost:5000/friends/${id}`, newFriend)
-                .then(resp => {
-                    this.setState({ friends: resp.data });
-                })
-                .catch(err => {
-                    console.log('Error posting data', err);
-                });
+            try {
+              const resp = await axios.put(`http://localhost:5000/friends/${id}`, newFriend)
+              this.setState({ friends: resp.data, updateID: '' })
+            }
+            catch(err) {
+              console.log('Error updating data:', err)
+            }
             //clear form
             this.setState({
                 errorData: {
@@ -139,10 +138,15 @@ class App extends Component {
         });
     };
 
-    handleDelete = id => {
-        const { friends } = this.state;
-        const deleteFriend = friends.filter(friend => friend.id !== id);
-        this.setState({ friends: deleteFriend });
+    handleDelete = async id => {
+        const { newFriend } = this.state;
+        try {
+          const resp = await axios.delete(`http://localhost:5000/friends/${id}`, newFriend)
+          this.setState({ friends: resp.data, updateID: '' })
+        }
+        catch(err) {
+          console.log('Error deleting data:', err)
+        }
     };
 
     render() {
