@@ -1,5 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Button, Flex, Heading } from 'rebass';
+import { Container, StyledForm } from './App.styles';
 import FriendList from './components/FriendList/FriendList';
 
 class App extends Component {
@@ -77,13 +79,14 @@ class App extends Component {
         if (!err && !isUpdate) {
             //POST request add friend
             try {
-              const resp = await axios.post('http://localhost:5000/friends/', newFriend)
-              this.setState({ friends: resp.data})
+                const resp = await axios.post(
+                    'http://localhost:5000/friends/',
+                    newFriend
+                );
+                this.setState({ friends: resp.data });
+            } catch (err) {
+                console.log('Error posting data:', err);
             }
-            catch(err) {
-              console.log('Error posting data:', err)
-            }
-
 
             //clear form
             this.setState({
@@ -102,11 +105,13 @@ class App extends Component {
         if (!err && isUpdate) {
             const id = this.state.updateID;
             try {
-              const resp = await axios.put(`http://localhost:5000/friends/${id}`, newFriend)
-              this.setState({ friends: resp.data, updateID: '' })
-            }
-            catch(err) {
-              console.log('Error updating data:', err)
+                const resp = await axios.put(
+                    `http://localhost:5000/friends/${id}`,
+                    newFriend
+                );
+                this.setState({ friends: resp.data, updateID: '' });
+            } catch (err) {
+                console.log('Error updating data:', err);
             }
             //clear form
             this.setState({
@@ -141,24 +146,42 @@ class App extends Component {
     handleDelete = async id => {
         const { newFriend } = this.state;
         try {
-          const resp = await axios.delete(`http://localhost:5000/friends/${id}`, newFriend)
-          this.setState({ friends: resp.data, updateID: '' })
+            const resp = await axios.delete(
+                `http://localhost:5000/friends/${id}`,
+                newFriend
+            );
+            this.setState({ friends: resp.data, updateID: '' });
+        } catch (err) {
+            console.log('Error deleting data:', err);
         }
-        catch(err) {
-          console.log('Error deleting data:', err)
-        }
+        this.setState({
+            newFriend: {
+                name: '',
+                age: '',
+                email: ''
+            }
+        });
     };
 
     render() {
         const { friends, newFriend, errorData, isUpdate } = this.state;
         return (
-            <>
-                <form onSubmit={this.handleSubmit}>
-                    <div>
+            <Container>
+                <StyledForm onSubmit={this.handleSubmit}>
+                    <Flex
+                        flexDirection="column"
+                        justifyContent="center"
+                        alignItems="center"
+                        pb={5}
+                    >
                         {isUpdate ? (
-                            <h3>Update Friend</h3>
+                            <Heading pt={5} pb={3} color="magenta">
+                                Update Friend
+                            </Heading>
                         ) : (
-                            <h3>Add New Friend</h3>
+                            <Heading pt={5} pb={3} color="magenta">
+                                Add New Friend
+                            </Heading>
                         )}
                         <input
                             type="text"
@@ -184,13 +207,13 @@ class App extends Component {
                             placeholder="Email"
                         />
                         <p style={{ color: 'red' }}>{errorData.emailErrors}</p>
-                    </div>
-                    {isUpdate ? (
-                        <button>Update Friend</button>
-                    ) : (
-                        <button>Add Friend</button>
-                    )}
-                </form>
+                        {isUpdate ? (
+                            <Button bg="magenta">Update Friend</Button>
+                        ) : (
+                            <Button bg="magenta">Add Friend</Button>
+                        )}
+                    </Flex>
+                </StyledForm>
                 {friends.map(friend => (
                     <FriendList
                         key={friend.id}
@@ -199,7 +222,7 @@ class App extends Component {
                         handleDelete={this.handleDelete}
                     />
                 ))}
-            </>
+            </Container>
         );
     }
 }
