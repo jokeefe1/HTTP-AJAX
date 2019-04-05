@@ -18,7 +18,6 @@ class App extends Component {
             emailErrors: ''
         },
         isUpdate: false,
-        isSelected: false,
         updateID: ''
     };
 
@@ -28,9 +27,8 @@ class App extends Component {
 
     getDataFromServer = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/friends');
-            const friends = response.data;
-            this.setState({ friends });
+            const resp = await axios.get('http://localhost:5000/friends');
+            this.setState({ friends: resp.data });
         } catch (err) {
             console.log('Error getting data:', err);
         }
