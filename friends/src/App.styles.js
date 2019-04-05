@@ -19,5 +19,6 @@ export const StyledForm = styled.form`
         border: 3px solid magenta;
         text-align: center;
         font-weight: 600;
+        outline: transparent;
     }
 `
