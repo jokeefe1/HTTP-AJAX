@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Flex, Heading, Text } from 'rebass';
-import { Button } from '../../App.styles'
+import { Button } from '../../App.styles';
 
 export default function FriendList(props) {
     const { id, name, age, email } = props.data;
@@ -38,13 +38,25 @@ export default function FriendList(props) {
                     {email}
                 </Text>
                 <Flex justifyContent="center" alignItems="center">
-                    <Button
-                        bg="magenta"
-                        m={2}
-                        onClick={() => props.handleUpdate(id)}
-                    >
-                        Select
-                    </Button>
+                    {props.updateID === id ? (
+                        <Button
+                            bg="transparent"
+                            color='magenta'
+                            border='1px solid magenta'
+                            m={2}
+                            onClick={() => props.handleUpdate(id)}
+                        >
+                            Deslect
+                        </Button>
+                    ) : (
+                        <Button
+                            bg="magenta"
+                            m={2}
+                            onClick={() => props.handleUpdate(id)}
+                        >
+                            Select
+                        </Button>
+                    )}
                     <Button
                         bg="magenta"
                         m={2}

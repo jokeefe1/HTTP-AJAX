@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Button as ButtonBase } from 'rebass';
+import styled from 'styled-components';
 
 export const Container = styled.div`
     width: 89%;
@@ -11,14 +11,13 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
     background-color: #232323;
-    box-sizing: border-box;
 `;
 
 export const StyledForm = styled.form`
     input {
         padding: 1rem;
         border-radius: 8px;
-        border: 3px solid magenta;
+        border: 2px solid magenta;
         text-align: center;
         font-weight: 600;
         outline: transparent;
@@ -26,6 +25,8 @@ export const StyledForm = styled.form`
 `;
 
 export const Button = styled(ButtonBase)`
+    outline: transparent;
+    cursor: pointer;
     &:hover {
         border: 1px solid magenta;
         color: magenta;
