@@ -143,7 +143,12 @@ class App extends Component {
                 this.setState({
                     newFriend: { ...friend },
                     isUpdate: true,
-                    updateID: id
+                    updateID: id,
+                  errorData: {
+                    nameErrors: '',
+                    ageErrors: '',
+                    emailErrors: ''
+                  },
                 });
             }
             if (updateID === id) {
