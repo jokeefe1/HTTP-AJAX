@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Card, Flex, Heading, Text } from 'rebass';
+import { Card, Flex, Heading, Text } from 'rebass';
+import { Button } from '../../App.styles'
 
 export default function FriendList(props) {
     const { id, name, age, email } = props.data;

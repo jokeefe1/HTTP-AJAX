@@ -1,16 +1,18 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
+import { Button as ButtonBase } from 'rebass';
 
 export const Container = styled.div`
     width: 89%;
     max-width: 800px;
+    min-height: 100vh;
     margin: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #232323;
-
-`
+    box-sizing: border-box;
+`;
 
 export const StyledForm = styled.form`
     input {
@@ -21,4 +23,12 @@ export const StyledForm = styled.form`
         font-weight: 600;
         outline: transparent;
     }
-`
+`;
+
+export const Button = styled(ButtonBase)`
+    &:hover {
+        border: 1px solid magenta;
+        color: magenta;
+        background-color: transparent;
+    }
+`;

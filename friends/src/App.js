@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Button, Flex, Heading } from 'rebass';
-import { Container, StyledForm } from './App.styles';
+import { Box, Flex, Heading } from 'rebass';
+import { Container, StyledForm, Button } from './App.styles';
 import FriendList from './components/FriendList/FriendList';
 
 class App extends Component {
@@ -166,6 +166,7 @@ class App extends Component {
     render() {
         const { friends, newFriend, errorData, isUpdate } = this.state;
         return (
+          <Box bg='#111'>
             <Container>
                 <StyledForm onSubmit={this.handleSubmit}>
                     <Flex
@@ -175,11 +176,11 @@ class App extends Component {
                         pb={5}
                     >
                         {isUpdate ? (
-                            <Heading pt={5} pb={3} color="magenta">
+                            <Heading pt={5} fontSize={[4, 5, 6]} pb={3} color="magenta">
                                 Update Friend
                             </Heading>
                         ) : (
-                            <Heading pt={5} pb={3} color="magenta">
+                            <Heading pt={5} fontSize={[4, 5, 6]} pb={3} color="magenta">
                                 Add New Friend
                             </Heading>
                         )}
@@ -223,6 +224,7 @@ class App extends Component {
                     />
                 ))}
             </Container>
+          </Box>
         );
     }
 }
