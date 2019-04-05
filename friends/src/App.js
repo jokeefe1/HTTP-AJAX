@@ -182,7 +182,8 @@ class App extends Component {
                 name: '',
                 age: '',
                 email: ''
-            }
+            },
+            isUpdate: false
         });
     };
 
@@ -208,7 +209,7 @@ class App extends Component {
                                 <Heading
                                     pt={5}
                                     fontSize={[4, 5, 6]}
-                                    pb={3}
+                                    pb={4}
                                     color="magenta"
                                 >
                                     Update Friend
@@ -217,7 +218,7 @@ class App extends Component {
                                 <Heading
                                     pt={5}
                                     fontSize={[4, 5, 6]}
-                                    pb={3}
+                                    pb={4}
                                     color="magenta"
                                 >
                                     Add New Friend
